@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E77B2973-B599-45BC-AC0F-A646824C85A0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Archimedes.Geometry</RootNamespace>
+    <AssemblyName>Archimedes.Geometry</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AARectangle.cs" />
+    <Compile Include="Algorithms\ConvexHullBuilder.cs" />
+    <Compile Include="Algorithms\IPolygonBoundingBoxAlgorythm.cs" />
+    <Compile Include="Algorithms\PathConnector.cs" />
+    <Compile Include="Algorithms\PolygonSmallestBoundingBoxAlgorythm.cs" />
+    <Compile Include="Algorithms\PolygonSmallestWidthBoundingBoxAlgorythm.cs" />
+    <Compile Include="DataStructures\CircularDoublyLinkedList.cs" />
+    <Compile Include="Direction.cs" />
+    <Compile Include="Extensions\NumberExtension.cs" />
+    <Compile Include="GeometrySettings.cs" />
+    <Compile Include="IGeometry.cs" />
+    <Compile Include="IOrdered.cs" />
+    <Compile Include="IShape.cs" />
+    <Compile Include="Line.cs" />
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="PointD.cs" />
+    <Compile Include="Primitives\Arc.collision.cs" />
+    <Compile Include="Primitives\Arc.cs" />
+    <Compile Include="Primitives\ArcBuilder.cs" />
+    <Compile Include="Primitives\Circle2.collision.cs" />
+    <Compile Include="Primitives\Circle2.cs" />
+    <Compile Include="Primitives\ComplexGeometry.cs" />
+    <Compile Include="Primitives\Line2.Collision.cs" />
+    <Compile Include="Primitives\LineSegment2.cs" />
+    <Compile Include="Primitives\LineString.cs" />
+    <Compile Include="Primitives\Polygon2.collision.cs" />
+    <Compile Include="Primitives\Polygon2.cs" />
+    <Compile Include="Primitives\Rectangle2.cs" />
+    <Compile Include="Primitives\RectangleAA2.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ray.cs" />
+    <Compile Include="SizeD.cs" />
+    <Compile Include="Units\Angle.cs" />
+    <Compile Include="Units\AngleParser.cs" />
+    <Compile Include="Units\AngleUnit.cs" />
+    <Compile Include="Vector2.cs" />
+    <Compile Include="VectorHelper.cs" />
+    <Compile Include="Vertices.cs" />
+    <Compile Include="VerticesHelper.cs" />
+    <Compile Include="_3D\Point3.cs" />
+    <Compile Include="_3D\StraightLine3.cs" />
+    <Compile Include="_3D\Vector3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Archimedes.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

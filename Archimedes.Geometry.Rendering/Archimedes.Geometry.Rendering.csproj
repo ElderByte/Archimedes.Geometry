@@ -36,8 +36,15 @@
     <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Archimedes.Geometry">
+      <HintPath>..\packages\Archimedes.Geometry.1.0.0.0\lib\net40\Archimedes.Geometry.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,10 +52,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapUtil.cs" />
+    <Compile Include="DrawingGroup.cs" />
+    <Compile Include="Effects\IEffect.cs" />
+    <Compile Include="Effects\OverlineEffect.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="PointFUtil.cs" />
+    <Compile Include="Primitives\Visual.cs" />
+    <Compile Include="Primitives\VisualAARectangle.cs" />
+    <Compile Include="Primitives\VisualArc.cs" />
+    <Compile Include="Primitives\VisualCircle.cs" />
+    <Compile Include="Primitives\VisualComposite.cs" />
+    <Compile Include="Primitives\VisualFactory.cs" />
+    <Compile Include="Primitives\VisualImage.cs" />
+    <Compile Include="Primitives\VisualLine.cs" />
+    <Compile Include="Primitives\VisualLineString.cs" />
+    <Compile Include="Primitives\VisualPoint.cs" />
+    <Compile Include="Primitives\VisualPolygon.cs" />
+    <Compile Include="Primitives\VisualRectangle.cs" />
+    <Compile Include="Primitives\VisualText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RectangleFUtil.cs" />
+    <Compile Include="Renderer.cs" />
+    <Compile Include="RenderEventArgs.cs" />
+    <Compile Include="ZoomWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Archimedes.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

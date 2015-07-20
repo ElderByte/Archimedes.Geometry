@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archimedes.Geometry", "Arch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archimedes.Geometry.Rendering", "Archimedes.Geometry.Rendering\Archimedes.Geometry.Rendering.csproj", "{EF38A3B7-96D4-461D-974F-CFF15B4AEBD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archimedes.Geometry.Tests", "Archimedes.Geometry.Tests\Archimedes.Geometry.Tests.csproj", "{60995AEC-8484-4463-9B2F-3C37DA5C8C6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EF38A3B7-96D4-461D-974F-CFF15B4AEBD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF38A3B7-96D4-461D-974F-CFF15B4AEBD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF38A3B7-96D4-461D-974F-CFF15B4AEBD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60995AEC-8484-4463-9B2F-3C37DA5C8C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60995AEC-8484-4463-9B2F-3C37DA5C8C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60995AEC-8484-4463-9B2F-3C37DA5C8C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60995AEC-8484-4463-9B2F-3C37DA5C8C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

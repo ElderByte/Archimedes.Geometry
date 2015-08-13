@@ -36,9 +36,6 @@
     <AssemblyOriginatorKeyFile>Archimedes.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Archimedes.Geometry">
-      <HintPath>..\packages\Archimedes.Geometry.1.0.0.0\lib\net40\Archimedes.Geometry.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -80,6 +77,12 @@
   <ItemGroup>
     <None Include="Archimedes.snk" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Archimedes.Geometry\Archimedes.Geometry.csproj">
+      <Project>{e77b2973-b599-45bc-ac0f-a646824c85a0}</Project>
+      <Name>Archimedes.Geometry</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

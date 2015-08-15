@@ -1,12 +1,4 @@
-﻿/*******************************************
- * 
- *  Written by Pascal Büttiker (c)
- *  April 2010
- * 
- * *****************************************
- * *****************************************/
-
-
+﻿
 using System;
 using System.Collections.Generic;
 using Archimedes.Geometry.Units;

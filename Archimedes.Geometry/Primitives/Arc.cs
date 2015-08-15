@@ -2,31 +2,24 @@
 using System.Collections.Generic;
 using Archimedes.Geometry.Units;
 
-/*******************************************
- * 
- *  Written by Pascal Büttiker (c)
- *  2010
- * 
- * *****************************************
- * *****************************************/
-
 
 namespace Archimedes.Geometry.Primitives
 {
 
     /// <summary>
     /// Represents an Arc in 2D Space
+    /// 
     /// </summary>
     public partial class Arc : IGeometry
     {
         #region Private Data
 
-        double? _radius = null;
-        Angle? _angle = null;
-        double? _bowlen = null;
-        Direction _direction = Direction.LEFT;
-        Vector2 _startPoint;
-        Vector2 _base;
+        private double? _radius = null;
+        private Angle? _angle = null;
+        private double? _bowlen = null;
+        private Direction _direction = Direction.LEFT;
+        private Vector2 _startPoint;
+        private Vector2 _base;
 
         #endregion
 

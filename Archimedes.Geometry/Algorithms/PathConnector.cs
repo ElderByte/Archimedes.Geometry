@@ -19,13 +19,7 @@ namespace Archimedes.Geometry.Algorithms
             _path2 = upath2;
         }
 
-        /// <summary>
-        /// Prepares for a new Search
-        /// </summary>
-        private void Reset(){
-            _bestDist = null;
-            _connectedPath = new List<Vertex>(); 
-        }
+
 
         public IEnumerable<Vertex> ConnectPaths() {
             Reset();
@@ -64,6 +58,15 @@ namespace Archimedes.Geometry.Algorithms
 
             _combineAction.Invoke();
             return _connectedPath;
+        }
+
+        /// <summary>
+        /// Prepares for a new Search
+        /// </summary>
+        private void Reset()
+        {
+            _bestDist = null;
+            _connectedPath = new List<Vertex>();
         }
 
 

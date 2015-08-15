@@ -76,7 +76,7 @@ namespace Archimedes.Geometry.Primitives
                 // Otherwise, this is a concave polygon
                 // we need to ensure, that the vertices do not intersect any line
                 var otherLines = polygon.ToLines();
-                return !IntersectLinesWith(otherLines, tolerance);
+                return !IsIntersection(otherLines, tolerance);
             }
 
             return false;
@@ -88,7 +88,7 @@ namespace Archimedes.Geometry.Primitives
         /// <param name="otherLines"></param>
         /// <param name="tolerance"></param>
         /// <returns></returns>
-        private bool IntersectLinesWith(LineSegment2[] otherLines, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        private bool IsIntersection(LineSegment2[] otherLines, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
             var myLines = this.ToLines();
 
@@ -96,7 +96,7 @@ namespace Archimedes.Geometry.Primitives
             {
                 foreach (var other in otherLines)
                 {
-                    if (myLine.InterceptLineWith(other, tolerance))
+                    if (myLine.HasIntersection(other, tolerance))
                         return true;
                 }
             }

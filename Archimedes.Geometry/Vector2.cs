@@ -16,7 +16,7 @@ namespace Archimedes.Geometry
     /// <summary> 
     /// 2D Vector Type
     /// </summary>
-    public struct Vector2 : IEquatable<Vector2>, IOrdered<Vector2>
+    public struct Vector2 : IEquatable<Vector2>, IOrdered<Vector2>, IComparable<Vector2>
     {
 
         #region Static Builder methods
@@ -202,11 +202,31 @@ namespace Archimedes.Geometry
         }
 
         public static bool operator ==(Vector2 v1, Vector2 v2){
-            return v1.X == v2.X && v1.Y == v2.Y;
+            return v1.Equals(v2);
         }
 
         public static bool operator !=(Vector2 v1, Vector2 v2) {
-            return !(v1 == v2);
+            return !v1.Equals(v2);
+        }
+
+        public static bool operator <(Vector2 v1, Vector2 v2)
+        {
+            return !v1.Equals(v2) && v1.Less(v2);
+        }
+
+        public static bool operator >(Vector2 v1, Vector2 v2)
+        {
+            return !v1.Equals(v2) && !v1.Less(v2);
+        }
+
+        public static bool operator <=(Vector2 v1, Vector2 v2)
+        {
+            return v1.Equals(v2) || v1.Less(v2);
+        }
+
+        public static bool operator >=(Vector2 v1, Vector2 v2)
+        {
+            return v1.Equals(v2) || !v1.Less(v2);
         }
 
         #endregion    
@@ -427,34 +447,6 @@ namespace Archimedes.Geometry
             return new Angle(a, AngleUnit.Radians);
         }
 
-
-        /*
-        public Rotation GetAngle2V(Vector2 vbase)
-        {
-            double gamma;
-            double tmp = this.DotProduct(vbase) / (this.Length * vbase.Length);
-            gamma = Rotation.ConvertRadiansToDegrees(Math.Acos(tmp));
-            if (gamma > 180)
-            { //from mathematic definition, it's always the shorter angle to return.
-                gamma = 360 - gamma;
-            }
-            return new Rotation(gamma, AngleUnit.Degrees);
-        }
-
-        public Rotation GetAngleBetweenClockWise(Vector2 b, Direction direction)
-        {
-            var theta = GetAngle2V(b);
-            if (((this.Y * b.X - this.X * b.Y) > 0) == (direction == Direction.RIGHT))
-            {
-                return theta;
-            }
-            else
-            {
-                return Rotation.FromDegrees(360) - theta;
-            }
-        }*/
-        
-
         /// <summary>
         /// Calculate a Vector which stands orthogonal on this Vector.
         /// </summary>
@@ -490,16 +482,24 @@ namespace Archimedes.Geometry
 
         #region IEquatable
 
+        /// <summary>
+        /// Checks if this vector is equal to the given one, using the default tolerance
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(Vector2 other) {
-            return this.Y == other.Y && this.X == other.X;
+            return Equals(other, GeometrySettings.DEFAULT_TOLERANCE);
         }
 
+        /// <summary>
+        /// Checks if this vector is equal to the given one, using the given tolerance
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
         public bool Equals(Vector2 other, double tolerance)
         {
-            if (tolerance < 0)
-            {
-                throw new ArgumentException("epsilon < 0");
-            }
+            if (tolerance < 0) throw new ArgumentException("tolerance < 0");
 
             return Math.Abs(other.X - this.X) < tolerance &&
                    Math.Abs(other.Y - this.Y) < tolerance;
@@ -521,17 +521,58 @@ namespace Archimedes.Geometry
         #region IOrdered
 
         /// <summary>
-        /// Lexically check if the given Vector is less than this one
+        /// Lexically check if the given Vector is less than this one.
         /// </summary>
-        /// <param name="o2"></param>
+        /// <param name="other"></param>
         /// <returns></returns>
-        public bool Less(IOrdered<Vector2> o2)
+        public bool Less(Vector2 other)
         {
-            var p2 = (Vector2)o2;
-            return X < p2.X || X == p2.X && Y < p2.Y;
+            return X < other.X || X == other.X && Y < other.Y;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public int CompareTo(Vector2 other)
+        {
+            if (this < other)
+            {
+                return -1;
+            }
+
+            if (this > other)
+            {
+                return 1;
+            }
+
+            return 0;
         }
 
         #endregion
+
+        /// <summary>
+        /// Returns the smaller vector
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vector2 Min(Vector2 a, Vector2 b)
+        {
+            return (a > b) ? b : a;
+        }
+
+        /// <summary>
+        /// Returns the smaller vector
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vector2 Max(Vector2 a, Vector2 b)
+        {
+            return (a > b) ? a : b;
+        }
     }
 }
 

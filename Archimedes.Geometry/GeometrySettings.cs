@@ -5,11 +5,13 @@ using System.Text;
 
 namespace Archimedes.Geometry
 {
-    //...
 
     public static class GeometrySettings
     {
+        /// <summary>
+        /// The default tolerance for mathematical and spatial operations.
+        /// </summary>
         public const double DEFAULT_TOLERANCE = 1e-6;
-        //public const double DEFAULT_TOLERANCE = 1.40129846432482E-45;
+       
     }
 }

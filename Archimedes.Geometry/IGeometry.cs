@@ -69,7 +69,7 @@ namespace Archimedes.Geometry
         bool HasCollision(IGeometry geometryObject, double tolerance = GeometrySettings.DEFAULT_TOLERANCE);
 
         /// <summary>
-        /// Checks Intersection and returns all Points at intersection joints
+        /// Checks Intersection and returns all intersection ppints
         /// </summary>
         /// <param name="other"></param>
         /// <param name="tolerance"></param>

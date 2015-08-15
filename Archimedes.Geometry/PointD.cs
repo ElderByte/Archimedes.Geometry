@@ -59,11 +59,10 @@ namespace Archimedes.Geometry
         /// <summary>
         /// Lexically check if the given Vector is less than this one
         /// </summary>
-        /// <param name="o2"></param>
+        /// <param name="p2"></param>
         /// <returns></returns>
-        public bool Less(IOrdered<PointD> o2)
+        public bool Less(PointD p2)
         {
-            var p2 = (PointD)o2;
             return X < p2.X || X == p2.X && Y < p2.Y;
         }
 

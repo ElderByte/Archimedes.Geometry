@@ -6,6 +6,7 @@ namespace Archimedes.Geometry.Tests
 {
     public class VectorTests
     {
+        #region Parse
 
         [TestCase("(1, 0)", 1)]
         [TestCase("(1, 0) (1, 0)", 2)]
@@ -16,8 +17,9 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(vertices.Length, expected);
         }
 
+        #endregion
 
-
+        #region Equality
 
         [TestCase("1, 0", "1, 0", 1e-4, true)]
         [TestCase("-1, 1", "-1, 1", 1e-4, true)]
@@ -26,13 +28,32 @@ namespace Archimedes.Geometry.Tests
         {
             var v1 = Vector2.Parse(v1s);
             var v2 = Vector2.Parse(v2s);
+
             Assert.AreEqual(expected, v1 == v2);
             Assert.AreEqual(expected, v1.Equals(v2));
             Assert.AreEqual(expected, v1.Equals((object) v2));
             Assert.AreEqual(expected, Equals(v1, v2));
             Assert.AreEqual(expected, v1.Equals(v2, tol));
+
             Assert.AreNotEqual(expected, v1 != v2);
         }
+
+        [TestCase("1, 1.01", "1, 1", 1e-4, false)]
+        [TestCase("1, 1.001", "1, 1", 1e-4, false)]
+        [TestCase("1, 1.0001", "1, 1", 1e-4, true)]
+        [TestCase("1, 1.00000001", "1, 1", 1e-4, true)]
+        [TestCase("1, 1.0001", "1, 1", GeometrySettings.DEFAULT_TOLERANCE, false)]
+        public void EqualsFloatingPrecision(string v1s, string v2s, double tol, bool expected)
+        {
+            var v1 = Vector2.Parse(v1s);
+            var v2 = Vector2.Parse(v2s);
+
+            Assert.AreEqual(expected, v1.Equals(v2, tol));
+        }
+
+        #endregion
+
+        #region Math operations
 
         [TestCase("-1, -2", "1, 2", "0, 0")]
         public void Add(string v1s, string v2s, string evs)
@@ -93,6 +114,18 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(expected, actual);
         }
 
+        [TestCase("1, 2", "3, 4", 11)]
+        public void DotProduct(string vs, string evs, double expected)
+        {
+            var v1 = Vector2.Parse(vs);
+            var v2 = Vector2.Parse(evs);
+            Assert.AreEqual(expected, v1.DotProduct(v2));
+        }
+
+        #endregion
+
+        #region Properties
+
         [TestCase("2, 0", 2)]
         [TestCase("-2, 0", 2)]
         [TestCase("0, 2", 2)]
@@ -102,6 +135,20 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(expected, v.Length, 1e-6);
         }
 
+
+        [TestCase("1, 1", 1)]
+        [TestCase("10, 0", 0)] // Horizontal slope = 0
+        [TestCase("0, 10", 0)] // Vertical slope = 0
+        [TestCase("3, 4", 1.33333333333333333333333333333)]
+        public void Slope(string vs, double expected)
+        {
+            var v1 = Vector2.Parse(vs);
+            Assert.AreEqual(v1.Slope, expected);
+        }
+
+        #endregion
+
+        #region Parrallel and Perpendicularity
 
         [TestCase("1, 0", "1, 0", 1e-4, false)]
         [TestCase("1, 0", "0, -1", 1e-4, true)]
@@ -130,8 +177,12 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(expected, v2.IsParallelTo(v1, tol));
         }
 
+        #endregion
+
+        #region Angles
+
         [TestCase("1, 0", "0, 1", 90)]
-        public void LegacyAngleToTest(string v1s, string v2s, float expected)
+        public void AngleToTest(string v1s, string v2s, float expected)
         {
             var v1 = Vector2.Parse(v1s);
             var v2 = Vector2.Parse(v2s);
@@ -144,7 +195,7 @@ namespace Archimedes.Geometry.Tests
         [TestCase("1, 0",  0)]
         [TestCase("0, 1", 90)]
         [TestCase("1, 1", 45)]
-        public void LegacyAngleToXTest(string v1s, float expected)
+        public void AngleSignedToXTest(string v1s, float expected)
         {
             var v1 = Vector2.Parse(v1s);
 
@@ -189,7 +240,9 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(expected.Degrees, cw.Degrees, 1e-3);
         }
 
+        #endregion
 
+        #region Transformations
 
         [TestCase("1, 0", "90°", "0, 1")]
         [TestCase("1, 0", "-270°", "0, 1")]
@@ -210,14 +263,6 @@ namespace Archimedes.Geometry.Tests
             Assert.True(expected.Equals(actual, 0.01));
         }
 
-        [TestCase("1, 2", "3, 4", 11)]
-        public void DotProduct(string vs, string evs, double expected)
-        {
-            var v1 = Vector2.Parse(vs);
-            var v2 = Vector2.Parse(evs);
-            Assert.AreEqual(expected, v1.DotProduct(v2));
-        }
-
         [TestCase("2, 3", "0.55470019, 0.83205029")]
         public void Normalize(string vs, string evs)
         {
@@ -226,18 +271,25 @@ namespace Archimedes.Geometry.Tests
             Assert.True(expected.Equals(v1.Normalize(), 1e-6));
         }
 
-        [TestCase("1, 1", 1)]
-        [TestCase("10, 0", 0)] // Horizontal slope = 0
-        [TestCase("0, 10", 0)] // Vertical slope = 0
-        [TestCase("3, 4", 1.33333333333333333333333333333)]
-        public void Slope(string vs, double expected)
+        #endregion
+
+        #region Sorting and comparing
+
+
+        [TestCase("1, 1", "1, 1", 0)]
+        [TestCase("1, 1", "2, 1", -1)]
+        [TestCase("2, 1", "1, 1", 1)]
+        [TestCase("1, 1", "1, 2", -1)]
+        [TestCase("1, 2", "1, 1", 1)]
+        public void CompareToTest(string vs, string evs, double expected)
         {
             var v1 = Vector2.Parse(vs);
-            Assert.AreEqual(v1.Slope, expected);
+            var v2 = Vector2.Parse(evs);
+            Assert.AreEqual(expected, v1.CompareTo(v2));
         }
 
 
+        #endregion
 
-        
-    }
+}
 }

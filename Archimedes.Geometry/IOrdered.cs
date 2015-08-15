@@ -15,6 +15,6 @@ namespace Archimedes.Geometry
         /// </summary>
         /// <param name="that">The element to check against</param>
         /// <returns></returns>
-        bool Less(IOrdered<T> that);
+        bool Less(T that);
     }
 }

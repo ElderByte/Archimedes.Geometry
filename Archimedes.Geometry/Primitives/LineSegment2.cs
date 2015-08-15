@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Archimedes.Geometry.Primitives
 {
@@ -15,7 +16,7 @@ namespace Archimedes.Geometry.Primitives
     /// Represents a Line segment in a 2D coord space.
     /// A line segment is a part of a line that is bounded by two distinct end points, and contains every point on the line between its end points.
     /// </summary>
-    public partial class LineSegment2 : IGeometry
+    public partial class LineSegment2 : IGeometry, IEquatable<LineSegment2>
     {
         
         #region Fields
@@ -238,24 +239,6 @@ namespace Archimedes.Geometry.Primitives
         }
 
         /// <summary>
-        /// Checks if this line has a congruent overlap with the given.
-        /// TODO Probably change this method to return the intersectin line segment
-        /// 
-        /// </summary>
-        /// <param name="other">The other line segment</param>
-        /// <param name="parallelTolerance">The tolerance for parallel detection</param>
-        /// <param name="overlapTolerance">The tolerance for overlap detection</param>
-        /// <returns></returns>
-        public bool IsCongruentTo(LineSegment2 other, double overlapTolerance = GeometrySettings.DEFAULT_TOLERANCE, double parallelTolerance = GeometrySettings.DEFAULT_TOLERANCE)
-        {
-            if (IsParallelTo(other, parallelTolerance))
-            {
-                return (Contains(other.Start, overlapTolerance) || Contains(other.End, overlapTolerance));
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Is this Line vertical?
         /// </summary>
         public bool IsVertical {
@@ -405,7 +388,7 @@ namespace Archimedes.Geometry.Primitives
             var pnts = new List<Vector2>();
 
             if (other is LineSegment2) {
-                var pnt = this.InterceptLine(other as LineSegment2, tolerance);
+                var pnt = this.IntersectLine(other as LineSegment2, tolerance);
                 if(pnt.HasValue)
                     pnts.Add(pnt.Value);
             } else
@@ -413,17 +396,86 @@ namespace Archimedes.Geometry.Primitives
             return pnts;
         }
 
-
+        
         public bool HasCollision(IGeometry geometry, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
-
             if (geometry is LineSegment2)
             {
-                return this.InterceptLineWith(geometry as LineSegment2, tolerance);
+                var line = geometry as LineSegment2;
+
+                if (HasOverlap(line, tolerance))
+                {
+                    return true;
+                }
+                else
+                {
+                    return this.HasIntersection(line, tolerance);
+                }
+
             }else { //delegate Collision Detection to other Geometry Object
                 return geometry.HasCollision(this, tolerance);
             }
         }
+
+
+        public bool HasOverlap(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        {
+            var overlapSegment = GetOverlapSegment(other, tolerance);
+            return overlapSegment != null;
+        }
+
+        public LineSegment2 GetOverlapSegment(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        {
+            if (IsParallelTo(other, tolerance))
+            {
+                var a = this.Start;
+                var b = this.End;
+                var c = other.Start;
+                var d = other.End;
+
+                // Ensure A< B, C < D and A<=C
+
+                if (a > b)
+                {   // Swap them
+                    var t = b;
+                    b = a;
+                    a = t;
+                }
+
+                if (c > d)
+                {   // Swap them
+                    var t = d;
+                    d = c;
+                    c = t;
+                }
+
+                if (!(a <= c))
+                {   // Swap them
+                    var t = c;
+                    c = a;
+                    a = t;
+                }
+
+                // -------------
+
+
+                if (b < c)
+                {
+                    // The elements are disjoint
+                    return null;
+                }else if (b.Equals(c))
+                {
+                    // The elements meet in a single point
+                    return null;
+                }else
+                {
+                    // The overlap segment is [C, min(B, D)]
+                    return new LineSegment2(c, Vector2.Min(b, d) );
+                }
+            }
+
+            return null;
+        } 
 
 
         #endregion
@@ -439,13 +491,14 @@ namespace Archimedes.Geometry.Primitives
         public double FindDistanceToPoint(Vector2 pt, out Vector2 closest) {
             return FindDistanceToPoint(pt, this, out closest);
         }
+
         public double FindDistanceToPoint(Vector2 pt) {
             Vector2 dummy;
             return FindDistanceToPoint(pt, this, out dummy);
         }
 
         /// <summary>
-        /// Calculate the distance between point pt and the line.
+        /// Calculate the closest distance between a given point pt and this line.
         /// </summary>
         /// <param name="pt">Target Point to wich distance is calculated</param>
         /// <param name="line">line</param>
@@ -486,6 +539,12 @@ namespace Archimedes.Geometry.Primitives
         }
 
         #endregion
+
+        public bool Equals(LineSegment2 other)
+        {
+            if (other == null) return false;
+            return this.Start == other.Start && this.End == other.End;
+        }
 
         public override string ToString()
         {

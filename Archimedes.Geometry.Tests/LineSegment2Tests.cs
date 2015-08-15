@@ -42,6 +42,16 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(l1.Length, expected);
         }
 
+        [TestCase("(10, 20),(200, 20)", "(10, 20),(200, 20)")]
+        public void TestEquality(string lineAStr, string lineBStr)
+        {
+            var lineA = LineSegment2.Parse(lineAStr);
+            var lineB = LineSegment2.Parse(lineBStr);
+
+            Assert.AreEqual(lineA, lineB);
+        }
+
+
         #endregion
 
         #region Slopes / Horz & Vert
@@ -98,11 +108,47 @@ namespace Archimedes.Geometry.Tests
             var line2 = LineSegment2.Parse(line2Str);
             Assert.AreEqual(expected, line1.IsParallelTo(line2));
         }
-         
+
 
         #endregion
 
         #region Intersections
+
+
+        [TestCase("(10, 50),(100, 50)", "(70,40),(70,60)", true)] // Horz - Vertical
+        [TestCase("(70,40),(70,60)", "(10, 50),(100, 50)", true)] // Vertical - Horz
+        [TestCase("(10, 50),(100, 50)", "(10,10),(90,90)", true)] // Horz - Diagonal
+        [TestCase("(25, 567.52168),(355.95663, 567.52168)", "(212.97, 555.5),(212.97, 579.5)", true)] // Specail real world case
+        [TestCase("(10, 100),(10, 20)", "(10,20),(150,20)", false)] // // Two lines meet - no proper intersection
+        [TestCase("(10, 20),(130, 20)", "(100,20),(200,20)", false)] // Paralel lines overlap - no proper intersection
+        [TestCase("(34, 546),(12, 132)", "(12,132),(4421,2354)", false)] // // Two lines meet in end points - no proper intersection
+        [TestCase("(10, 20),(10, 120)", "(10,50),(50,250)", false)] // // A line touches another - no proper intersection
+
+        public void TestProperIntersection(string line1Str, string line2Str, bool expectedProperIntersection)
+        {
+            var line1 = LineSegment2.Parse(line1Str);
+            var line2 = LineSegment2.Parse(line2Str);
+            var properIntersection = line1.IsIntersectionProper(line2);
+            Assert.AreEqual(expectedProperIntersection, properIntersection);
+        }
+
+
+
+        [TestCase("(10, 50),(100, 50)", "(70,40),(70,60)", true)] // Horz - Vertical
+        [TestCase("(70,40),(70,60)", "(10, 50),(100, 50)",  true)] // Vertical - Horz
+        [TestCase("(10, 50),(100, 50)", "(10,10),(90,90)", true)] // Horz - Diagonal
+        [TestCase("(25, 567.52168),(355.95663, 567.52168)", "(212.97, 555.5),(212.97, 579.5)", true)] // Specail real world case
+        [TestCase("(10, 100),(10, 20)", "(10,20),(150,20)", true)] // Two lines meet in a point - collision
+        [TestCase("(10, 20),(130, 20)", "(100,20),(200,20)", true)] // Paralel lines overlap - large collision
+        public void TestLineCollisions(string line1Str, string line2Str, bool expectedCollision)
+        {
+            var line1 = LineSegment2.Parse(line1Str);
+            var line2 = LineSegment2.Parse(line2Str);
+
+            var collides = line1.HasCollision(line2);
+            Assert.AreEqual(expectedCollision, collides);
+        }
+
 
         [TestCase("(10, 50),(100, 50)", "(70,40),(70,60)", "(70, 50)")] // Horz - Vertical
         [TestCase("(70,40),(70,60)", "(10, 50),(100, 50)", "(70, 50)")] // Vertical - Horz
@@ -110,30 +156,15 @@ namespace Archimedes.Geometry.Tests
         [TestCase("(25, 567.52168),(355.95663, 567.52168)", "(212.97, 555.5),(212.97, 579.5)", "(212.97, 567.52168)")] // Specail real world case
         public void IntersectLine(string line1Str, string line2Str, string expectedIntersection)
         {
-            var line1 = LineSegment2.Parse(line1Str);
-            var line2 = LineSegment2.Parse(line2Str);
+            IGeometry line1 = LineSegment2.Parse(line1Str);
+            IGeometry line2 = LineSegment2.Parse(line2Str);
 
             var expected = Vector2.Parse(expectedIntersection);
 
-            var intersect = line1.HasCollision(line2);
             var intersection = line1.Intersect(line2);
 
-            Assert.AreEqual(true, intersect);
             Assert.AreEqual(expected, intersection.First());
         }
-
-        /*
-        [TestCase("(25, 567.52168),(355.95663, 567.52168)", "(212.97, 555.5),(212.97, 579.5)", true)] // Specail real world case
-        public void IntersectLine(string line1Str, string line2Str, bool expectedIntersection)
-        {
-            var line1 = Line2.Parse(line1Str);
-            var line2 = Line2.Parse(line2Str);
-
-            var intersection = line1.Intersect(line2);
-            var intersects = line1.IntersectsWith(line2);
-
-            Assert.AreEqual(expectedIntersection, intersects);
-        }*/
 
 
 
@@ -162,6 +193,33 @@ namespace Archimedes.Geometry.Tests
                     Assert.AreEqual(expectedInters[i], actual[i]);
                 }
             }
+        }
+
+        #endregion
+
+        #region Overlaps
+
+        [TestCase("(10, 20),(200, 20)", "(50,20),(300,20)", "(50,20),(200,20)")]
+        public void TestOverlap(string line1Str, string line2Str, string expectedOverlapStr)
+        {
+            var line1 = LineSegment2.Parse(line1Str);
+            var line2 = LineSegment2.Parse(line2Str);
+            var expectedOverlap = LineSegment2.Parse(expectedOverlapStr);
+
+            var overlap = line1.GetOverlapSegment(line2);
+            Assert.AreEqual(expectedOverlap, overlap);
+        }
+
+        [TestCase("(10, 20),(200, 20)", "(50,20),(300,30)")]  // Not parallel - no overlap, at best an intersection
+        [TestCase("(10, 20),(200, 20)", "(300,20),(400,20)")] // They are disjoint
+        [TestCase("(10, 20),(200, 20)", "(200,20),(400,20)")] // They meet in one point
+        public void TestNoOverlap(string line1Str, string line2Str)
+        {
+            var line1 = LineSegment2.Parse(line1Str);
+            var line2 = LineSegment2.Parse(line2Str);
+
+            var overlap = line1.HasOverlap(line2);
+            Assert.AreEqual(false, overlap);
         }
 
         #endregion

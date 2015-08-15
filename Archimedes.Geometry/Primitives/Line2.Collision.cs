@@ -14,7 +14,7 @@ namespace Archimedes.Geometry.Primitives
         /// <param name="other"></param>
         /// <param name="tolerance"></param>
         /// <returns>Returns a Point if func succeeds. If there is no interception, empty point is returned.</returns>
-        private Vector2? InterceptLine(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        private Vector2? IntersectLine(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
 
             double interPntX = 0;
@@ -48,35 +48,43 @@ namespace Archimedes.Geometry.Primitives
         }
 
         /// <summary>
-        /// Is there a interception?
+        /// Is there a intersection?
         /// </summary>
         /// <param name="other"></param>
         /// <param name="tolerance"></param>
         /// <returns>Returns true/false.</returns>
-        public bool InterceptLineWith(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        public bool HasIntersection(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
-            double intersectionX = 0;
-            double intersectionY = 0;
+            return IntersectLine(other, tolerance).HasValue;
+        }
 
-            if (other == null || this.IsParallelTo(other, tolerance))
-                return false;
+        /// <summary>
+        /// Checks if this line segment properly intresects another line semgent.
+        /// The intersection between two line segments is considered proper if they intersect in a single point in the interior of both segments (e.g. the intersection is a single point and is not equal to any of the endpoints).
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
+        public bool IsIntersectionProper(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        {
+            // If the lines are parallel, there cant be a proper intersection
+            if (this.IsParallelTo(other, tolerance)) return false;
 
-            //intercept of two endless lines
-            if ((!this.IsVertical) && (!other.IsVertical)) {    // both NOT vertical
-                intersectionX = ((-1 * (this.YMovement - other.YMovement)) / (this.Slope - other.Slope));
-                intersectionY = (this.Slope * intersectionX + this.YMovement);
-            } else if (this.IsVertical) {                  // this vertical (so it must lie on this.X)
-                intersectionX = this.Start.X;
-                intersectionY = (other.Slope * intersectionX + other.YMovement);
-            } else if (other.IsVertical) {                // Line2 vertical (so it must lie on Line2.X)
-                intersectionX = other.Start.X;
-                intersectionY = (this.Slope * intersectionX + this.YMovement);
+            var intersecitonPoints = Intersect(other, tolerance).ToList();
+            if (intersecitonPoints.Count == 1)
+            { // There must only be one intersection point
+
+                var intersectionPoint = intersecitonPoints.First();
+                // This intersection point must now lie on the interior of both lines, i.e. not on any endpoint of both lines.
+
+                if (this.Start.Equals(intersectionPoint, tolerance) || this.End.Equals(intersectionPoint, tolerance)
+                    || other.Start.Equals(intersectionPoint, tolerance) || other.End.Equals(intersectionPoint, tolerance))
+                {
+                    return false; // The intersection is on the line start/end point - thus they only meet.
+                }
+                return true;
             }
-
-            var intersection = new Vector2(intersectionX, intersectionY);
-
-            // check if computed intercept lies on our line.
-            return (this.Contains(intersection, tolerance) && other.Contains(intersection, tolerance));
+            return false;
         }
 
         #endregion
@@ -85,7 +93,7 @@ namespace Archimedes.Geometry.Primitives
         #region Line - AARectangle Intersection
 
         /// <summary>
-        /// Returns true if there is at least one Interception Point.
+        /// Returns true if there is at least one intersection point.
         /// </summary>
         /// <param name="rect1"></param>
         /// <param name="tolerance"></param>
@@ -100,7 +108,7 @@ namespace Archimedes.Geometry.Primitives
             var borderLines = FromRectangle(rect1); //get 4 borderlines from rect
 
             // check if any of the borderlines intercept with this line
-            return borderLines.Any(border => this.InterceptLineWith(border, tolerance));
+            return borderLines.Any(border => this.HasIntersection(border, tolerance));
         }
 
 
@@ -118,10 +126,10 @@ namespace Archimedes.Geometry.Primitives
             var borderLines = FromRectangle(rect); //get 4 borderlines from rect
 
             foreach (var border in borderLines) {
-                if (this.InterceptLineWith(border, tolerance))
+                if (this.HasIntersection(border, tolerance))
                 {
                     // found interception
-                    var pnt = this.InterceptLine(border, tolerance);
+                    var pnt = this.IntersectLine(border, tolerance);
                     if(pnt.HasValue)
                         intercepts.Add(pnt.Value);
                     i++;

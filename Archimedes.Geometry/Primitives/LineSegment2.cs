@@ -458,9 +458,20 @@ namespace Archimedes.Geometry.Primitives
             else
                 maxIntersection = new Vector2(Math.Min(max1.X, max2.X), Math.Min(max1.Y * invertY, max2.Y * invertY));
 
-            bool intersect = minIntersection.X <= maxIntersection.X &&
-                             (!isDescending && minIntersection.Y <= maxIntersection.Y ||
-                               isDescending && minIntersection.Y >= maxIntersection.Y);
+
+            bool intersect = false;
+            if (minIntersection.X < maxIntersection.X || Math.Abs(minIntersection.X - maxIntersection.X) < tolerance)
+            {
+                if (isDescending)
+                {
+                    intersect = minIntersection.Y > maxIntersection.Y || Math.Abs(minIntersection.Y - maxIntersection.Y) < tolerance;
+                }
+                else
+                {
+                    intersect = minIntersection.Y < maxIntersection.Y || Math.Abs(minIntersection.Y - maxIntersection.Y) < tolerance;
+                }
+            }
+   
 
             if (!intersect) return null;
 

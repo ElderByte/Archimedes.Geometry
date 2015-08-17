@@ -226,7 +226,20 @@ namespace Archimedes.Geometry.Tests
 
         #region Overlaps
 
-        [TestCase("(10, 20),(200, 20)", "(50,20),(300,20)", "(50,20),(200,20)")]
+        [TestCase("(25, 175) (100, 175)", "(25,175) (175, 175)", true)]
+        [TestCase("(25, 174.99999999999997) (99.999999999999986, 175)", "(25.000000000000028,175) (175, 175)", true)]
+        public void TesthasOverlap(string line1Str, string line2Str, bool expectedOverlap)
+        {
+            var line1 = LineSegment2.Parse(line1Str);
+            var line2 = LineSegment2.Parse(line2Str);
+            var hasOverlap = line1.HasOverlap(line2);
+            Assert.AreEqual(expectedOverlap, hasOverlap);
+        }
+
+
+        [TestCase("(10, 20),(200, 20)", "(50,20),(300,20)", "(50,20),(200,20)")]        // Partially overlapping
+        [TestCase("(10, 20),(200, 20)", "(10, 20),(200, 20)", "(10, 20),(200, 20)")]    // Fully overlapping
+        [TestCase("(10, 10),(200, 10)", "(10, 10),(50, 10)", "(10, 10),(50, 10)")]
         public void TestOverlap(string line1Str, string line2Str, string expectedOverlapStr)
         {
             var line1 = LineSegment2.Parse(line1Str);

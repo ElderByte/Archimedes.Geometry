@@ -215,9 +215,9 @@ namespace Archimedes.Geometry.Tests
             // Check each point
             if (expectedInters.Length == actual.Count)
             {
-                for (int i = 0; i < expectedInters.Length; i++)
+                foreach (var p in actual)
                 {
-                    Assert.AreEqual(expectedInters[i], actual[i]);
+                    Assert.True(expectedInters.Contains(p));
                 }
             }
         }

@@ -121,22 +121,23 @@ namespace Archimedes.Geometry.Primitives
         /// <returns>Returns count of Interception Points</returns>
         public List<Vector2> RectIntersection(AARectangle rect, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
-            var intercepts = new List<Vector2>(2);
+            var intersections = new List<Vector2>(2);
             short i = 0;
             var borderLines = FromRectangle(rect); //get 4 borderlines from rect
 
             foreach (var border in borderLines) {
-                if (this.HasIntersection(border, tolerance))
+
+                var pnt = this.IntersectLine(border, tolerance);
+
+                if (pnt.HasValue)
                 {
-                    // found interception
-                    var pnt = this.IntersectLine(border, tolerance);
-                    if(pnt.HasValue)
-                        intercepts.Add(pnt.Value);
+                    // found intersection point
+                    intersections.Add(pnt.Value);
                     i++;
                     if (i == 2) break;  
                 }
             }
-            return intercepts;
+            return intersections;
         }
 
         #endregion

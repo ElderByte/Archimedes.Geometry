@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
+
 
 namespace Archimedes.Geometry.Primitives
 {
@@ -46,6 +44,7 @@ namespace Archimedes.Geometry.Primitives
 
         public RectangleAA2(RectangleAA2 prototype)
         {
+            if(prototype == null) throw new ArgumentNullException("prototype");
             Prototype(prototype);
         }
 
@@ -177,6 +176,16 @@ namespace Archimedes.Geometry.Primitives
             return new Polygon2(ToVertices());
         }
 
+        public AARectangle ToAARectangle()
+        {
+            return new AARectangle(this.Location, this.Size);
+        }
+
+        public LineSegment2[] ToLines()
+        {
+            return LineSegment2.FromRectangle(ToAARectangle());
+        }
+
         #endregion
 
         #region Collision
@@ -269,21 +278,6 @@ namespace Archimedes.Geometry.Primitives
 
 
         #endregion
-
-        private LineSegment2[] ToLines()
-        {
-            var topRight = new Vector2(X + Width, Y);
-            var bottomRight = new Vector2(X + Width, Y + Height);
-            var bottomLeft = new Vector2(X, Y + Height);
-
-            return new[]
-            {
-                new LineSegment2(Location, topRight),
-                new LineSegment2(topRight, bottomRight),
-                new LineSegment2(bottomRight, bottomLeft),
-                new LineSegment2(bottomLeft, Location)
-            };
-        }
 
         public override string ToString()
         {

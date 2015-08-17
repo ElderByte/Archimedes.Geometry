@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace Archimedes.Geometry.Primitives
 {
@@ -58,12 +59,18 @@ namespace Archimedes.Geometry.Primitives
         /// <returns>4 lines, one for each side of the rectangle</returns>
         public static LineSegment2[] FromRectangle(AARectangle rect)
         {
-            var sides = new LineSegment2[4];
-            sides[0] = new LineSegment2(rect.X, rect.Y, rect.X + rect.Width, rect.Y);                                 // upper horz line
-            sides[1] = new LineSegment2(rect.X, rect.Y + rect.Height, rect.X + rect.Width, rect.Y + rect.Height);     // lower horz line
-            sides[2] = new LineSegment2(rect.X, rect.Y, rect.X, rect.Y + rect.Height);                                // left  vert line
-            sides[3] = new LineSegment2(rect.X + rect.Width, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);      // right  vert line
-            return sides;
+            var topLeft = rect.Location;
+            var topRight = new Vector2(rect.X + rect.Width, rect.Y);
+            var bottomRight = new Vector2(rect.X + rect.Width, rect.Y + rect.Height);
+            var bottomLeft = new Vector2(rect.X, rect.Y + rect.Height);
+
+            return new[]
+            {
+                new LineSegment2(topLeft, topRight),
+                new LineSegment2(topRight, bottomRight),
+                new LineSegment2(bottomRight, bottomLeft),
+                new LineSegment2(bottomLeft, topLeft)
+            };
         }
 
         /// <summary>
@@ -424,58 +431,44 @@ namespace Archimedes.Geometry.Primitives
             return overlapSegment != null;
         }
 
-        public LineSegment2 GetOverlapSegment(LineSegment2 other, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+
+
+
+        public LineSegment2 GetOverlapSegment(LineSegment2 line2, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
-            if (IsParallelTo(other, tolerance))
-            {
-                var a = this.Start;
-                var b = this.End;
-                var c = other.Start;
-                var d = other.End;
+            bool isHorizontal = this.IsHorizontal;
+            bool isDescending = this.Slope < 0 && !isHorizontal;
+            double invertY = isDescending || isHorizontal ? -1 : 1;
 
-                // Ensure A< B, C < D and A<=C
+            var min1 = new Vector2(Math.Min(this.Start.X, this.End.X), Math.Min(this.Start.Y * invertY, this.End.Y * invertY));
+            var max1 = new Vector2(Math.Max(this.Start.X, this.End.X), Math.Max(this.Start.Y * invertY, this.End.Y * invertY));
 
-                if (a > b)
-                {   // Swap them
-                    var t = b;
-                    b = a;
-                    a = t;
-                }
+            var min2 = new Vector2(Math.Min(line2.Start.X, line2.End.X), Math.Min(line2.Start.Y * invertY, line2.End.Y * invertY));
+            var max2 = new Vector2(Math.Max(line2.Start.X, line2.End.X), Math.Max(line2.Start.Y * invertY, line2.End.Y * invertY));
 
-                if (c > d)
-                {   // Swap them
-                    var t = d;
-                    d = c;
-                    c = t;
-                }
+            Vector2 minIntersection;
+            if (isDescending)
+                minIntersection = new Vector2(Math.Max(min1.X, min2.X), Math.Min(min1.Y * invertY, min2.Y * invertY));
+            else
+                minIntersection = new Vector2(Math.Max(min1.X, min2.X), Math.Max(min1.Y * invertY, min2.Y * invertY));
 
-                if (!(a <= c))
-                {   // Swap them
-                    var t = c;
-                    c = a;
-                    a = t;
-                }
+            Vector2 maxIntersection;
+            if (isDescending)
+                maxIntersection = new Vector2(Math.Min(max1.X, max2.X), Math.Max(max1.Y * invertY, max2.Y * invertY));
+            else
+                maxIntersection = new Vector2(Math.Min(max1.X, max2.X), Math.Min(max1.Y * invertY, max2.Y * invertY));
 
-                // -------------
+            bool intersect = minIntersection.X <= maxIntersection.X &&
+                             (!isDescending && minIntersection.Y <= maxIntersection.Y ||
+                               isDescending && minIntersection.Y >= maxIntersection.Y);
 
+            if (!intersect) return null;
 
-                if (b < c)
-                {
-                    // The elements are disjoint
-                    return null;
-                }else if (b.Equals(c))
-                {
-                    // The elements meet in a single point
-                    return null;
-                }else
-                {
-                    // The overlap segment is [C, min(B, D)]
-                    return new LineSegment2(c, Vector2.Min(b, d) );
-                }
-            }
+            // Check if they only meet in a single point
+            if (minIntersection.Equals(maxIntersection, tolerance)) return null;
 
-            return null;
-        } 
+            return new LineSegment2(minIntersection, maxIntersection);
+        }
 
 
         #endregion

@@ -98,7 +98,7 @@ namespace Archimedes.Geometry.Primitives
         /// <param name="rect1"></param>
         /// <param name="tolerance"></param>
         /// <returns></returns>
-        public bool InterceptRectWith(AARectangle rect1, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        public bool HasRectIntersection(AARectangle rect1, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
             
             // is Start/EndPoint in the Rectangle?
@@ -119,7 +119,7 @@ namespace Archimedes.Geometry.Primitives
         /// <param name="rect"></param>
         /// <param name="tolerance"></param>
         /// <returns>Returns count of Interception Points</returns>
-        public List<Vector2> InterceptRect(AARectangle rect, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
+        public List<Vector2> RectIntersection(AARectangle rect, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
             var intercepts = new List<Vector2>(2);
             short i = 0;

@@ -120,7 +120,7 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(Angle.Zero, rect.Rotation);   
         }
 
-        [TestCase("(0,0),(100,0),(100,100),(0,100)", "(100,100)")]     // Specail case: Empty rect!
+        [TestCase("(0,0),(100,0),(100,100),(0,100)", "(100,100)")] 
         public void Middlepoint(string rectStr, string newMiddleStr)
         {
             var vertices = Vector2.ParseAll(rectStr);

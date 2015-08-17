@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Archimedes.Geometry
 {
@@ -61,6 +58,31 @@ namespace Archimedes.Geometry
             get { return !Direction.IsVertical ? Direction.Slope : 0; }
         }
 
+        public bool IsVertical
+        {
+            get { return Direction.IsVertical; }
+        }
+
+        public bool IsHorizontal
+        {
+            get { return Direction.IsHorizontal; }
+        }
+
+        /// <summary>
+        /// Returns the Y coordinate where the line intersects the Y-Axis.
+        /// If this line is vertical, return ZERO.
+        /// </summary>
+        /// <returns></returns>
+        public double IntersectY
+        {
+            get
+            {
+                if (this.IsVertical) return 0.0; // Never a proper intersection
+                return -Slope * Location.X + Location.Y;
+            }
+        }
+
+
         #endregion
 
         /// <summary>
@@ -89,9 +111,7 @@ namespace Archimedes.Geometry
             else
             {
                 // We use the line equation y = m * x + c
-                var m = Slope;
-                var c = CalcYIntercept();
-                return (Math.Abs(point.Y - m * point.X + c) < tolerance);
+                return (Math.Abs(point.Y - (Slope * point.X + IntersectY)) < tolerance);
             }
         }
 
@@ -113,48 +133,28 @@ namespace Archimedes.Geometry
             double intersectionpntX = 0;
             double intersectionpntY = 0;
 
+            
+
             if (!Direction.IsVertical && !other.Direction.IsVertical)
             {    // both NOT vertical
-                intersectionpntX = ((-1.0 * (this.CalcYIntercept() - other.CalcYIntercept())) / (Direction.Slope - other.Direction.Slope));
-                intersectionpntY = (Direction.Slope * intersectionpntX + this.CalcYIntercept());
+                intersectionpntX = ((-1.0 * (this.IntersectY - other.IntersectY)) / (Direction.Slope - other.Direction.Slope));
+                intersectionpntY = (Direction.Slope * intersectionpntX + this.IntersectY);
             }
             else if (Direction.IsVertical)
             {                  // this vertical (so it must lie on this.X)
                 intersectionpntX = Location.X;
-                intersectionpntY = (other.Direction.Slope * intersectionpntX + other.CalcYIntercept());
+                intersectionpntY = (other.Direction.Slope * intersectionpntX + other.IntersectY);
             }
             else if (other.Direction.IsVertical)
             {                // Line2 vertical (so it must lie on Line2.X)
                 intersectionpntX = other.Location.X;
-                intersectionpntY = (Direction.Slope * intersectionpntX + this.CalcYIntercept());
+                intersectionpntY = (Direction.Slope * intersectionpntX + this.IntersectY);
             }
 
             return new Vector2(intersectionpntX, intersectionpntY);
 
         }
 
-        #region Private methods
-
-        /// <summary>
-        /// Get the c variable value in line equation.
-        /// This value is the y-intersection of this line.
-        /// c = y - m * x
-        /// </summary>
-        /// <returns></returns>
-        private double CalcYIntercept()
-        { 
-            if (Direction.IsVertical)
-            {
-                return 0;
-            }
-            else
-            {
-                return Location.Y - (Slope * Location.X);
-            }
-        }
-
-
-
-        #endregion
+     
     }
 }

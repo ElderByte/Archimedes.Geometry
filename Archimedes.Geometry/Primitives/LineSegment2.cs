@@ -433,11 +433,26 @@ namespace Archimedes.Geometry.Primitives
 
 
 
-
+        /// <summary>
+        /// Returns the overlaping line segment of two lines.
+        /// 
+        /// If the two lines dont overlap, or only meet in a single point, NULL is returned.
+        /// 
+        /// </summary>
+        /// <param name="line2"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
         public LineSegment2 GetOverlapSegment(LineSegment2 line2, double tolerance = GeometrySettings.DEFAULT_TOLERANCE)
         {
+            // The line segments must be parallel
+            if (!this.IsParallelTo(line2, tolerance)) return null;
+            
+            // They must be in the same infinite line to overlap
+            if (!ToLine().Contains(line2.Start)) return null;
+
+
             bool isHorizontal = this.IsHorizontal;
-            bool isDescending = this.Slope < 0 && !isHorizontal;
+            bool isDescending = !(this.Slope > 0 || Math.Abs(this.Slope) < tolerance) && !isHorizontal;
             double invertY = isDescending || isHorizontal ? -1 : 1;
 
             var min1 = new Vector2(Math.Min(this.Start.X, this.End.X), Math.Min(this.Start.Y * invertY, this.End.Y * invertY));
@@ -471,9 +486,8 @@ namespace Archimedes.Geometry.Primitives
                     intersect = minIntersection.Y < maxIntersection.Y || Math.Abs(minIntersection.Y - maxIntersection.Y) < tolerance;
                 }
             }
-   
 
-            if (!intersect) return null;
+            if (!intersect) return null; // The two line segments are disjoint
 
             // Check if they only meet in a single point
             if (minIntersection.Equals(maxIntersection, tolerance)) return null;

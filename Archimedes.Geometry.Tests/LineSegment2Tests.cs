@@ -134,6 +134,7 @@ namespace Archimedes.Geometry.Tests
         [TestCase("(25, 567.52168),(355.95663, 567.52168)", "(212.97, 555.5),(212.97, 579.5)", true)] // Specail real world case
         [TestCase("(10, 100),(10, 20)", "(10,20),(150,20)", true)] // Two lines meet in a point - collision
         [TestCase("(10, 20),(130, 20)", "(100,20),(200,20)", true)] // Paralel lines overlap - large collision
+        [TestCase("(10, 20),(60, 70)", "(30,20),(20,20)", false)]
         public void TestLineCollisions(string line1Str, string line2Str, bool expectedCollision)
         {
             var line1 = LineSegment2.Parse(line1Str);
@@ -254,6 +255,8 @@ namespace Archimedes.Geometry.Tests
         [TestCase("(10, 20),(200, 20)", "(300,20),(400,20)")] // They are disjoint
         [TestCase("(10, 20),(200, 20)", "(200,20),(400,20)")] // They end-start meet in one point
         [TestCase("(5, 30),(45, 30)", "(10,10),(20,10)")]     // Parallel but line hovers above other
+        [TestCase("(10, 20),(60, 70)", "(30,20),(20,20)")]    // non axial line 
+        [TestCase("(10, 20),(60, 70)", "(35,30),(45,40)")]    // two parallel but nonaxial non overlapping lines 
         public void TestNoOverlap(string line1Str, string line2Str)
         {
             var line1 = LineSegment2.Parse(line1Str);

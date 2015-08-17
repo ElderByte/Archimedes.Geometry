@@ -92,7 +92,24 @@ namespace Archimedes.Geometry.Tests
             var hasCollision = rect.HasCollision(line);
 
             Assert.AreEqual(expectedCollision, hasCollision);
+        }
 
+
+        [TestCase("20, 10", "10, 10", "(10, 20),(60, 70)", false)] // Under the line
+        [TestCase("15, 50", "10, 10", "(10, 20),(60, 70)", false)] // Above the line
+        [TestCase("40, 50", "10, 10", "(10, 20),(60, 70)", true)] // Above the line
+        public void CollisionWithLine2(string locationStr, string sizeStr, string lineStr, bool expectedCollision)
+        {
+            var location = Vector2.Parse(locationStr);
+            var size = SizeD.Parse(sizeStr);
+            var rect = new RectangleAA2(location, size);
+
+            var line = LineSegment2.Parse(lineStr);
+
+
+            var hasCollision = rect.HasCollision(line);
+
+            Assert.AreEqual(expectedCollision, hasCollision);
         }
 
     }

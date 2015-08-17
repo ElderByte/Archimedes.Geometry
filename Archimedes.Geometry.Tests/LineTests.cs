@@ -22,6 +22,19 @@ namespace Archimedes.Geometry.Tests
             Assert.AreEqual(l1.Direction, direction);
         }
 
+
+        [TestCase("0, 0", "0, 1", 0)]   // Vertical
+        [TestCase("1, 1", "0, 20", 0)]   // Vertical
+        public void TestYIntersect(string locationStr, string directionStr, double expectedYIntersect)
+        {
+            var location = Vector2.Parse(locationStr);
+            var direction = Vector2.Parse(directionStr);
+
+            var l1 = new Line(location, direction);
+            Assert.AreEqual(expectedYIntersect, l1.IntersectY);
+        }
+
+
         [TestCase("0, 0", "1, 0", "20, 0", true)]   // Horizontal
         [TestCase("0, 0", "1, 0", "20, 1", false)]
         [TestCase("0, 0", "0, 1", "0, 20", true)]   // Vertical
@@ -32,6 +45,9 @@ namespace Archimedes.Geometry.Tests
         [TestCase("0, 0", "1, 1", "-662, -666", false)]
         [TestCase("22, 22", "1, 1", "345, 345", true)]
         [TestCase("-22, -22", "1, 1", "345, 345", true)]
+        [TestCase("10, 20", "1, 1", "10, 20", true)]
+        [TestCase("10, 20", "1, 1", "10, 30", false)]
+        [TestCase("10, 20", "1, 1", "60, 70", true)]
         public void ContainsPoint(string locationStr, string directionStr, string pointStr, bool expectedContains)
         {
             var location = Vector2.Parse(locationStr);

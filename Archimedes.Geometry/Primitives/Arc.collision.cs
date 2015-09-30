@@ -296,7 +296,7 @@ namespace Archimedes.Geometry.Primitives
                 var l2 = new LineSegment2(this.GetPointOnArc(this.Angle), bowMiddle);
                 var intersection = new LineSegment2(this.MiddlePoint, point);
 
-                conatins = intersection.HasIntersection(l1, tolerance) || intersection.HasIntersection(l2, tolerance);
+                conatins = intersection.IntersectLine(l1, tolerance).HasValue || intersection.IntersectLine(l2, tolerance).HasValue;
 
             }
             return conatins;

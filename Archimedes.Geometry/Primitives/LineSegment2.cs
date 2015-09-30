@@ -395,7 +395,7 @@ namespace Archimedes.Geometry.Primitives
             var pnts = new List<Vector2>();
 
             if (other is LineSegment2) {
-                var pnt = this.IntersectLine(other as LineSegment2, tolerance);
+                var pnt = IntersectLine(other as LineSegment2, tolerance);
                 if(pnt.HasValue)
                     pnts.Add(pnt.Value);
             } else
@@ -416,7 +416,7 @@ namespace Archimedes.Geometry.Primitives
                 }
                 else
                 {
-                    return this.HasIntersection(line, tolerance);
+                    return IntersectLine(line, tolerance).HasValue;
                 }
 
             }else { //delegate Collision Detection to other Geometry Object

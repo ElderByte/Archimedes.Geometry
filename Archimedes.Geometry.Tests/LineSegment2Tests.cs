@@ -157,7 +157,7 @@ namespace Archimedes.Geometry.Tests
         [TestCase("(10, 20),(130, 20)", "(100,20),(200,20)", false)] // Paralel lines overlap - no proper intersection
         [TestCase("(34, 546),(12, 132)", "(12,132),(4421,2354)", false)] // // Two lines meet in end points - no proper intersection
         [TestCase("(10, 20),(10, 120)", "(10,50),(50,250)", false)] // // A line touches another - no proper intersection
-
+        [TestCase("(6,56497115745559, -13,4350288425444), (20, -1,77635683940025E-15)", "(0, 0), (20, 0)", false)] // // A line touches another - no proper intersection
         public void TestProperIntersection(string line1Str, string line2Str, bool expectedProperIntersection)
         {
             var line1 = LineSegment2.Parse(line1Str);
